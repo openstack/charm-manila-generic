@@ -1,0 +1,96 @@
+options:
+  openstack-origin:
+    default: distro
+    type: string
+    description: |
+      Repository from which to install.  May be one of the following:
+      distro (default), ppa:somecustom/ppa, a deb url sources entry,
+      or a supported Cloud Archive release pocket.
+
+      Supported Cloud Archive sources include: cloud:precise-folsom,
+      cloud:precise-folsom/updates, cloud:precise-folsom/staging,
+      cloud:precise-folsom/proposed.
+
+      Note that updating this setting to a source that is known to
+      provide a later version of OpenStack will trigger a software
+      upgrade.
+  debug:
+    default: False
+    type: boolean
+    description: Enable debug logging
+  verbose:
+    default: False
+    type: boolean
+    description: Enable verbose logging
+  share-backend-name:
+    type: string
+    default: generic
+    description: |
+      The name given to the backend.  This is used to generate the backend
+      configuration section and link it into the share server.  If two
+      different configurations of the same backend type are needed, then this
+      config option can be used to separate them in the backend configuration.
+  share-protocols:
+    type: string
+    default: NFS CIFS
+    description: |
+      The share protocols that the backends will be able to provide.  The
+      default is good for the generic backends.  Other backends may not support
+      both NFS and CIFS.  This is a space delimited list of protocols.
+  driver-service-image-name:
+    type: string
+    description: the image name to use for the generic instance
+    default: manila-service-image
+  driver-handles-share-servers:
+    type: boolean
+    description: Whether to generic driver should run up a share server.
+    default: True
+  driver-service-instance-flavor-id:
+    type: int
+    default: 0
+    description: |
+      The ID for the flavor to launch images in. The driver blocks if this is
+      not set.
+  driver-connect-share-server-to-tenant-network:
+    type: boolean
+    default: True
+    description: Whether to connect the share server into the tenant network.
+  driver-service-instance-user:
+    type: string
+    description: The user to log into the share instance.
+    default: manila
+  driver-auth-type:
+    type: string
+    default: ""
+    description: |
+      One of 'password', 'ssh', 'both'.  This determines how manila
+      authenticates against the service-instance; e.g. using password, ssh
+      keypair or both.
+  driver-service-instance-password:
+    type: string
+    default: ""
+    description: |
+      If the service user doesn't log in with a key-pair a password is needed
+      to allow manila to ssh into the service instance.  If the password is set
+      then it is used and an SSH key is not configured.
+  driver-service-ssh-key:
+    type: string
+    default: ""
+    description: |
+      The key for the manila to inject into the instance.  If set, manila will
+      inject it into OpenStack if the keypair name doesn't exist.
+  driver-service-ssh-key-public:
+    type: string
+    default: ""
+    description: |
+      The public key for the manila to inject into the instance.  If set,
+      manila will inject it into OpenStack if the keypair name doesn't exist.
+  driver-keypair-name:
+    type: string
+    default: manila-service
+    description: |
+      This is the keypair name that will be provided to nova instances.  Note
+      that manila uploads the keypair from the config settings
+      'generic-driver-ssh-private-key' and 'generic-driver-ssh-public-key'.  If
+      neither the ssh config vars are set nor the password then the charm will
+      block until they are set.
