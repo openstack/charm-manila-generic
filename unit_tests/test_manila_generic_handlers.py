@@ -30,12 +30,13 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
             'update-status']
         hook_set = {
             'when': {
-                'send_config': ('manila-plugin.available', ),
+                'send_config': ('manila-plugin.changed', ),
                 'update_config': ('manila-plugin.available',
                                   'config.changed', ),
             },
             'when_not': {
-                'send_config': ('config.changed', ),
+                'send_config': ('config.changed', 'update-status'),
+                'update_config': ('update-status', ),
             },
         }
         # test that the hooks were registered via the
@@ -64,6 +65,11 @@ class TestHandlerFunctions(test_utils.PatchHelper):
             configuration_data = None
             authentication_data = 'auth data'
 
+            _clear_changed = 0
+
+            def clear_changed(self):
+                self._clear_changed += 1
+
         generic.get_config_for_principal.return_value = "some data"
         manila_plugin = FakeManilaPlugin()
         handlers.send_config(manila_plugin)
@@ -75,3 +81,4 @@ class TestHandlerFunctions(test_utils.PatchHelper):
         generic.get_config_for_principal.assert_called_once_with('auth data')
         generic.assess_status.assert_called_once_with()
         generic.maybe_write_ssh_keys.assert_called_once_with()
+        self.assertEqual(manila_plugin._clear_changed, 1)

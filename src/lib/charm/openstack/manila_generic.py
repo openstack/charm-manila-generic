@@ -20,9 +20,12 @@ from __future__ import absolute_import
 import os
 import textwrap
 
+import charmhelpers.contrib.openstack.templating as os_templating
 import charmhelpers.core.hookenv as hookenv
+import charmhelpers.core.templating
 import charms_openstack.charm
 import charms_openstack.adapters
+import charms.reactive
 
 # There are no additional packages to install.
 PACKAGES = []
@@ -80,6 +83,31 @@ def computed_debug_level(config):
     return "WARNING"
 
 
+# Work-around charms.openstack non ability to expose a property on the
+# charms.reactive relation to the adapter.  it would work if it was a function,
+# but sadly not for a property.
+@charms_openstack.adapters.adapter_property('manila-plugin')
+def authentication_data(manila_plugin):
+    """Return the authentication dictionary for use in the manila.conf template
+
+        The authentication data format is:
+        {
+            'username': <value>
+            'password': <value>
+            'project_domain_id': <value>
+            'project_name': <value>
+            'user_domain_id': <value>
+            'auth_uri': <value>
+            'auth_url': <value>
+            'auth_type': <value>  # 'password', typically
+        }
+
+    :param manila_plugin: the charms.reactive relation instance.
+    :returns: dict described above
+    """
+    return manila_plugin.relation.authentication_data
+
+
 ###
 # Implementation of the Manila Charm classes
 
@@ -99,12 +127,15 @@ class ManilaGenericCharm(charms_openstack.charm.OpenStackCharm):
     default_service = None  # There is no service for this charm.
     services = []
 
-    required_relations = []
+    required_relations = ['manila-plugin', ]
 
     restart_map = {}
 
     # This is the command to sync the database
     sync_cmd = []
+
+    # TODO: remove this when the charms.openstack fix lands
+    adapters_class = charms_openstack.adapters.OpenStackRelationAdapters
 
     def custom_assess_status_check(self):
         """Validate that the driver configuration is at least complete, and
@@ -137,171 +168,50 @@ class ManilaGenericCharm(charms_openstack.charm.OpenStackCharm):
         """Assuming that the configuration data is valid, return the
         configuration data for the principal charm.
 
-        The format of the returned data is:
+        The format of the complete returned data is:
         {
-            "complete": <boolean>,
-            '<config file>': {
-                '<section>: (
-                    (key, value),
-                    (key, value),
-            )
+            "<config file>: <string>
         }
 
         If the configuration is not complete, or we don't have auth data from
-        the principal charm, then we return:
-        {
-            "complete": false,
-            "reason": <message>
-        }
+        the principal charm, then we return and emtpy dictionary {}
 
         :param auth_data: the raw dictionary received from the principal charm
         :returns: structure described above.
         """
+        # If there is no auth_data yet, then we can't write our config.
         if not auth_data:
-            return {"complete": False, "reason": "No authentication data"}
+            return {}
+        # If the state from the assess_status is not None then we're blocked,
+        # so don't send any config to the principal.
         state, message = self.custom_assess_status_check()
         if state:
-            return {"complete": False, "reason": message}
+            return {}
         options = self.options  # tiny optimisation for less typing.
-        # We have the auth data & the config is reasonably sensible.
+
+        # If there is no backend name, then we can't send the data yet as the
+        # manila-charm won't know what to do with it.
         if not options.share_backend_name:
-            return {"complete": False,
-                    "reason": "Problem: share-backend-name is not set"}
+            return {}
 
-        # if the driver is not going to handle the share servers then we only
-        # need a very simple config section
-        if not options.driver_handles_share_servers:
-            generic_section = self.process_lines((
-                "# Set usage of Generic driver which uses cinder as backend.",
-                "share_driver = "
-                "manila.share.drivers.generic.GenericShareDriver",
-                "",
-                "# Generic driver supports both driver modes - "
-                "with and without handling",
-                "# of share servers. So, we need to define explicitly which "
-                "one we are",
-                "# enabling using this driver.",
-                "driver_handles_share_servers = False",
-                "# Custom name for share backend.",
-                ("share_backend_name", options.share_backend_name),
-                "# Generic driver seems to insist on 'service_instance_user' "
-                "even if it isn't using it",
-                ("service_instance_user",
-                 options.driver_service_instance_user)))
-            return {
-                "complete": True,
-                MANILA_CONF: {
-                    "[{}]".format(options.share_backend_name): generic_section,
-                },
-            }
-
-        # we use the same username/password/auth for each section as every
-        # service user has then same permissions as admin.
-        auth_section = self.process_lines((
-            "# Only needed for the generic drivers as of Mitaka",
-            ('username', auth_data['username']),
-            ('password', auth_data['password']),
-            ('project_domain_id', auth_data['project_domain_id']),
-            ('project_name', auth_data['project_name']),
-            ('user_domain_id', auth_data['user_domain_id']),
-            ('auth_uri', auth_data['auth_uri']),
-            ('auth_url', auth_data['auth_url']),
-            ('auth_type', auth_data['auth_type'])))
-
-        # Expression is True if the generic driver should use a password rather
-        # than an ssh key.
-        if options.computed_use_password:
-            service_instance_password = (
-                "service_instance_password",
-                options.driver_service_instance_password)
-        else:
-            service_instance_password = "# No generic password section"
-
-        # Expression is True if the generic driver should use a password rather
-        # than an ssh key.
-        if options.computed_use_ssh:
-            ssh_section = tuple(self.process_lines((
-                ("path_to_private_key", MANILA_SSH_KEY_PATH),
-                ("path_to_public_key", MANILA_SSH_KEY_PATH_PUBLIC),
-                ("manila_service_keypair_name",
-                 options.driver_keypair_name))))
-        else:
-            ssh_section = ("# No ssh section", )
-
-        # And finally configure the generic section
-        generic_section = self.process_lines((
-            "# Set usage of Generic driver which uses cinder as backend.",
-            "share_driver = manila.share.drivers.generic.GenericShareDriver",
-            "",
-            "# Generic driver supports both driver modes - "
-            "with and without handling",
-            "# of share servers. So, we need to define explicitly which one "
-            "we are",
-            "# enabling using this driver.",
-            ("driver_handles_share_servers",
-             options.driver_handles_share_servers),
-            "",
-            "# The flavor that Manila will use to launch the instance.",
-            ("service_instance_flavor_id",
-             options.driver_service_instance_flavor_id),
-            "",
-            "# Generic driver uses a glance image for building service VMs "
-            "in nova.",
-            "# The following options specify the image to use.",
-            "# We use the latest build of [1].",
-            "# [1] https://github.com/openstack/manila-image-elements",
-            ("service_instance_user",
-             options.driver_service_instance_user),
-            ("service_image_name", options.driver_service_image_name),
-            ("connect_share_server_to_tenant_network",
-             options.driver_connect_share_server_to_tenant_network),
-            "",
-            "# These will be used for keypair creation and inserted into",
-            "# service VMs.",
-            "# TODO: this presents a problem with HA and failover - as the"
-            "keys",
-            "# will no longer be the same -- need to be able to set these via",
-            "# a config option.",
-            service_instance_password, ) +
-            ssh_section +
-            ("",
-             "# Custom name for share backend.",
-             ("share_backend_name", options.share_backend_name)))
+        # We have the auth data & the config is reasonably sensible.
+        # We can try and render the config file segment.
+        # TODO this is horrible, and we should have something in
+        # charms.openstack to do this, but we need a c.r relation to be able to
+        # add it to the adapters_instance
+        manila_plugin = charms.reactive.RelationBase.from_state(
+            'manila-plugin.available')
+        self.adapters_instance.add_relation(manila_plugin)
+        rendered_configs = charmhelpers.core.templating.render(
+            source=os.path.basename(MANILA_CONF),
+            template_loader=os_templating.get_loader(
+                'templates/', self.release),
+            target=None,
+            context=self.adapters_instance)
 
         return {
-            "complete": True,
-            MANILA_CONF: {
-                "[nova]": auth_section,
-                "[neutron]": auth_section,
-                "[cinder]": auth_section,
-                "[{}]".format(options.share_backend_name): generic_section,
-            },
+            MANILA_CONF: rendered_configs
         }
-
-    @staticmethod
-    def process_lines(lines):
-        """Process each of the lines.  If the line is a string, then just
-        passes it though; if the line is a tuple (and it must be a 2-tuple)
-        then the string is interpolated with an equals.
-
-        :param lines: list of strings or 2-tuples of strings
-        :returns: list of strings
-        """
-        out = []
-        for line in lines:
-            if isinstance(line, str):
-                out.append(line)
-            elif isinstance(line, (list, tuple)):
-                if len(line) != 2:
-                    raise TypeError("Line '{}' must be length 2"
-                                    .format(line))
-                out.append("{} = {}".format(*line))
-            # raise an error on other types
-            else:
-                raise TypeError("Line '{}' must be a string, tuple or list."
-                                " Passed a {}"
-                                .format(line, type(line)))
-        return out
 
     def maybe_write_ssh_keys(self):
         """Maybe write the ssh keys from the options to the key files where

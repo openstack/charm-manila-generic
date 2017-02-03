@@ -63,8 +63,7 @@ class ManilaGenericBasicDeployment(OpenStackAmuletDeployment):
              'constraints': {'mem': '3072M'}},
             {'name': 'rabbitmq-server'},
             {'name': 'keystone'},
-            {'name': 'manila',
-             'location': 'cs:~openstack-charmers/xenial/manila'}
+            {'name': 'manila'}
         ]
         super(ManilaGenericBasicDeployment, self)._add_services(
             this_service, other_services)

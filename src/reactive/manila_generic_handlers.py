@@ -29,8 +29,9 @@ charms_openstack.charm.use_defaults(
     'update-status')
 
 
-@charms.reactive.when('manila-plugin.available')
-@charms.reactive.when_not('config.changed')
+@charms.reactive.when('manila-plugin.changed')
+@charms.reactive.when_not('config.changed',
+                          'update-status')
 def send_config(manila_plugin):
     """Send the configuration over to the prinicpal charm"""
     with charms_openstack.charm.provide_charm_instance() as generic_charm:
@@ -42,9 +43,11 @@ def send_config(manila_plugin):
                 manila_plugin.authentication_data))
         generic_charm.maybe_write_ssh_keys()
         generic_charm.assess_status()
+        manila_plugin.clear_changed()
 
 
 @charms.reactive.when('manila-plugin.available',
                       'config.changed')
+@charms.reactive.when_not('update-status')
 def update_config(manila_plugin):
     send_config(manila_plugin)

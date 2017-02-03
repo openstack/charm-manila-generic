@@ -98,6 +98,15 @@ class TestManilaGenericCharmConfigProperties(Helper):
         self.assertEqual(manila_generic.computed_debug_level(config), "DEBUG")
 
 
+class TestManilaGenericCharmManilaPluginProperties(Helper):
+
+    def test_authentication_data(self):
+        manila_plugin = mock.MagicMock()
+        manila_plugin.relation.authentication_data = 'test data'
+        self.assertEqual(manila_generic.authentication_data(manila_plugin),
+                         'test data')
+
+
 class TestManilaGenericCharm(Helper):
 
     def _patch_config_and_charm(self, config):
@@ -156,9 +165,7 @@ class TestManilaGenericCharm(Helper):
     def test_get_config_for_principal(self):
         # note that this indirectly tests 'process_lines' as well.
         c = manila_generic.ManilaGenericCharm()
-        self.assertEqual(
-            c.get_config_for_principal(None),
-            {'complete': False, 'reason': 'No authentication data'})
+        self.assertEqual(c.get_config_for_principal(None), {})
         # we want to handle share servers to True to check for misconfig
         config = {
             'driver-handles-share-servers': True,
@@ -185,9 +192,7 @@ class TestManilaGenericCharm(Helper):
             'auth_type': 'type1',
         }
         self.maxDiff = None
-        self.assertEqual(
-            c.get_config_for_principal(auth_data),
-            {'complete': False, 'reason': message})
+        self.assertEqual(c.get_config_for_principal(auth_data), {})
         # now set up the config to be okay to generate the sections
         config['driver-handles-share-servers'] = True
         config['driver-service-image-name'] = 'manila'
@@ -197,120 +202,10 @@ class TestManilaGenericCharm(Helper):
         config['driver-keypair-name'] = 'my-keyname'
         # test that we've set the backend name
         c = manila_generic.ManilaGenericCharm()
-        self.assertEqual(
-            c.get_config_for_principal(auth_data),
-            {'complete': False, 'reason':
-             'Problem: share-backend-name is not set'})
-        # now test that we actually generate some config data
-        config['share-backend-name'] = 'test-backend'
-        # simplify the output for the next test
-        config['driver-handles-share-servers'] = False
-        c = manila_generic.ManilaGenericCharm()
-        lines = c.get_config_for_principal(auth_data)
-        # verify that "# No generic password section" is in the lines
-        conf = manila_generic.MANILA_CONF
-        self.assertIn(conf, lines)
-        self.assertIn('[test-backend]', lines[conf])
-        section = lines[conf]['[test-backend]']
-        self.assertIn('share_driver = '
-                      'manila.share.drivers.generic.GenericShareDriver',
-                      section)
-        self.assertIn('driver_handles_share_servers = False', section)
-        self.assertIn('share_backend_name = test-backend', section)
+        self.assertEqual(c.get_config_for_principal(auth_data), {})
 
-        # Now verify that when we switch the driver handles shares on that the
-        # sections all appear
-        config['driver-handles-share-servers'] = True
-        c = manila_generic.ManilaGenericCharm()
-        lines = c.get_config_for_principal(auth_data)
-        self.assertIn(conf, lines)
-        self.assertIn('[test-backend]', lines[conf])
-        self.assertIn('[nova]', lines[conf])
-        self.assertIn('[neutron]', lines[conf])
-        self.assertIn('[cinder]', lines[conf])
-        # check each of the nova, neutron and cinder sections (which are all
-        # identical)
-        auth_lines = ['# Only needed for the generic drivers as of Mitaka',
-                      'username = user',
-                      'password = pass',
-                      'project_domain_id = pd1',
-                      'project_name = p1',
-                      'user_domain_id = ud1',
-                      'auth_uri = uri1',
-                      'auth_url = url1',
-                      'auth_type = type1']
-
-        for s in ('[nova]', '[neutron]', '[cinder]'):
-            section = lines[conf][s]
-            self._verify_section_contains(section, auth_lines)
-
-        # now check the [test-backend] section
-        section = lines[conf]['[test-backend]']
-        self.assertIn('share_driver = '
-                      'manila.share.drivers.generic.GenericShareDriver',
-                      section)
-        self.assertIn('driver_handles_share_servers = True', section)
-        self.assertIn('share_backend_name = test-backend', section)
-        self.assertIn('service_instance_flavor_id = 103', section)
-        self._verify_section_contains(
-            section,
-            ['service_instance_user = manila-user',
-             'service_image_name = manila',
-             'connect_share_server_to_tenant_network = False'])
-        self._verify_section_contains(
-            section,
-            ['# No generic password section',
-             '# No ssh section', ])
-
-        # Now switch on the password section
-        config['driver-auth-type'] = 'password'
-        c = manila_generic.ManilaGenericCharm()
-        lines = c.get_config_for_principal(auth_data)
-        section = lines[conf]['[test-backend]']
-        self.assertNotIn('# No generic password section', section)
-        self.assertIn('service_instance_password = password', section)
-
-        # Now switch on the SSH section
-        config['driver_service_ssh_key'] = 'ssh-key'
-        config['driver-service-ssh-key-public'] = 'ssh-key-public'
-        config['driver-auth-type'] = 'ssh'
-        c = manila_generic.ManilaGenericCharm()
-        lines = c.get_config_for_principal(auth_data)
-        section = lines[conf]['[test-backend]']
-        self.assertNotIn('# No ssh section', section)
-        self.assertIn('# No generic password section', section)
-        # test for ssh lines
-        self._verify_section_contains(
-            section,
-            ['path_to_private_key = {}'
-             .format(manila_generic.MANILA_SSH_KEY_PATH),
-             'path_to_public_key = {}'
-             .format(manila_generic.MANILA_SSH_KEY_PATH_PUBLIC),
-             'manila_service_keypair_name = my-keyname', ])
-
-        # Enable the connect_share_to_tenant_network and both password and ssh
-        config['driver-auth-type'] = 'both'
-        config['driver-connect-share-server-to-tenant-network'] = True
-        c = manila_generic.ManilaGenericCharm()
-        lines = c.get_config_for_principal(auth_data)
-        section = lines[conf]['[test-backend]']
-        self.assertNotIn('# No ssh section', section)
-        self.assertNotIn('# No generic password section', section)
-        self.assertIn('service_instance_password = password', section)
-        # test for ssh lines
-        self._verify_section_contains(
-            section,
-            ['path_to_private_key = {}'
-             .format(manila_generic.MANILA_SSH_KEY_PATH),
-             'path_to_public_key = {}'
-             .format(manila_generic.MANILA_SSH_KEY_PATH_PUBLIC),
-             'manila_service_keypair_name = my-keyname', ])
-        self.assertIn('connect_share_server_to_tenant_network = True', section)
-
-    def _verify_section_contains(self, section, lines):
-        index = section.index(lines[0])
-        for i, line in enumerate(lines):
-            self.assertEqual(section[index + i], line)
+        # can't currently test that the outputted template is accurate in tests
+        # as we mock out the templating logic from charmhelpers.
 
     def test_maybe_write_ssh_keys(self):
         config = {
