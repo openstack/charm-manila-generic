@@ -31,7 +31,7 @@ class ManilaGenericBasicDeployment(OpenStackAmuletDeployment):
     A functional test will be performed by a mojo or tempest test.
     """
 
-    def __init__(self, series, openstack=None, source=None, stable=False,
+    def __init__(self, series, openstack=None, source=None, stable=True,
                  keystone_version='2'):
         """Deploy the entire test environment.
         """
