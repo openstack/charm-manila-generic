@@ -16,6 +16,7 @@ tags:
   - openstack
 series:
   - xenial
+  - zesty
 subordinate: true
 provides:
   manila-plugin:
