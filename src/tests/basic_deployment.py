@@ -44,7 +44,7 @@ class ManilaGenericBasicDeployment(OpenStackAmuletDeployment):
         self._deploy()
 
         u.log.info('Waiting on extended status checks...')
-        exclude_services = ['mysql', ]
+        exclude_services = []
         self._auto_wait_for_status(exclude_services=exclude_services)
 
         self._initialize_tests()
@@ -58,8 +58,7 @@ class ManilaGenericBasicDeployment(OpenStackAmuletDeployment):
            """
         this_service = {'name': 'manila-generic'}
         other_services = [
-            {'name': 'mysql',
-             'location': 'cs:percona-cluster',
+            {'name': 'percona-cluster',
              'constraints': {'mem': '3072M'}},
             {'name': 'rabbitmq-server'},
             {'name': 'keystone'},
@@ -71,11 +70,11 @@ class ManilaGenericBasicDeployment(OpenStackAmuletDeployment):
     def _add_relations(self):
         """Add all of the relations for the services."""
         relations = {
-            'manila:shared-db': 'mysql:shared-db',
+            'manila:shared-db': 'percona-cluster:shared-db',
             'manila:amqp': 'rabbitmq-server:amqp',
             'manila:identity-service': 'keystone:identity-service',
             'manila:manila-plugin': 'manila-generic:manila-plugin',
-            'keystone:shared-db': 'mysql:shared-db',
+            'keystone:shared-db': 'percona-cluster:shared-db',
         }
         super(ManilaGenericBasicDeployment, self)._add_relations(relations)
 
@@ -103,7 +102,7 @@ class ManilaGenericBasicDeployment(OpenStackAmuletDeployment):
         # Access the sentries for inspecting service units
         self.manila_sentry = self.d.sentry['manila'][0]
         self.manila_generic_sentry = self.d.sentry['manila-generic'][0]
-        self.mysql_sentry = self.d.sentry['mysql'][0]
+        self.percona_cluster_sentry = self.d.sentry['percona-cluster'][0]
         self.keystone_sentry = self.d.sentry['keystone'][0]
         self.rabbitmq_sentry = self.d.sentry['rabbitmq-server'][0]
         u.log.debug('openstack release val: {}'.format(
@@ -112,7 +111,7 @@ class ManilaGenericBasicDeployment(OpenStackAmuletDeployment):
             self._get_openstack_release_string()))
 
         keystone_ip = self.keystone_sentry.relation(
-            'shared-db', 'mysql:shared-db')['private-address']
+            'shared-db', 'percona-cluster:shared-db')['private-address']
 
         # We need to auth either to v2.0 or v3 keystone
         if self._keystone_version == '2':
