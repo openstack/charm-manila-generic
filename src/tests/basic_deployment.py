@@ -1,10 +1,6 @@
 import amulet
 
-from keystoneclient import session as keystone_session
-from keystoneclient.auth import identity as keystone_identity
 import keystoneclient.exceptions
-from keystoneclient.v2_0 import client as keystone_v2_0_client
-from keystoneclient.v3 import client as keystone_v3_client
 from manilaclient.v1 import client as manila_client
 
 from charmhelpers.contrib.openstack.amulet.deployment import (
@@ -110,42 +106,11 @@ class ManilaGenericBasicDeployment(OpenStackAmuletDeployment):
         u.log.debug('openstack release str: {}'.format(
             self._get_openstack_release_string()))
 
-        keystone_ip = self.keystone_sentry.relation(
-            'shared-db', 'percona-cluster:shared-db')['private-address']
-
-        # We need to auth either to v2.0 or v3 keystone
-        if self._keystone_version == '2':
-            ep = ("http://{}:35357/v2.0"
-                  .format(keystone_ip.strip().decode('utf-8')))
-            auth = keystone_identity.v2.Password(
-                username='admin',
-                password='openstack',
-                tenant_name='admin',
-                auth_url=ep)
-            keystone_client_lib = keystone_v2_0_client
-        elif self._keystone_version == '3':
-            ep = ("http://{}:35357/v3"
-                  .format(keystone_ip.strip().decode('utf-8')))
-            auth = keystone_identity.v3.Password(
-                user_domain_name='admin_domain',
-                username='admin',
-                password='openstack',
-                domain_name='admin_domain',
-                auth_url=ep)
-            keystone_client_lib = keystone_v3_client
-        else:
-            raise RuntimeError("keystone version must be '2' or '3'")
-
-        sess = keystone_session.Session(auth=auth)
-        self.keystone = keystone_client_lib.Client(session=sess)
-        # The service_catalog is missing from V3 keystone client when auth is
-        # done with session (via authenticate_keystone_admin()
-        # See https://bugs.launchpad.net/python-keystoneclient/+bug/1508374
-        # using session construct client will miss service_catalog property
-        # workaround bug # 1508374 by forcing a pre-auth and therefore, getting
-        # the service-catalog --
-        # see https://bugs.launchpad.net/python-keystoneclient/+bug/1547331
-        self.keystone.auth_ref = auth.get_access(sess)
+        # Authenticate admin with keystone endpoint
+        self.keystone = u.authenticate_keystone_admin(self.keystone_sentry,
+                                                      user='admin',
+                                                      password='openstack',
+                                                      tenant='admin')
 
     def test_205_manila_to_manila_generic(self):
         """Verify that the manila to manila-generic config is working"""
@@ -244,15 +209,6 @@ class ManilaGenericBasicDeployment(OpenStackAmuletDeployment):
                 key=lambda r: r.name.lower() == admin_role.name.lower(),
                 create=lambda: self.keystone.roles.add_user_role(
                     demo_user, admin_role, tenant=tenant))
-            # now we can finally get the manila client and create the secret
-            keystone_ep = self.keystone.service_catalog.url_for(
-                service_type='identity', endpoint_type='publicURL')
-            auth = keystone_identity.v2.Password(
-                username=demo_user.name,
-                password='pass',
-                tenant_name=tenant.name,
-                auth_url=keystone_ep)
-
         else:
             # find or create the 'default' domain
             domain = self._find_or_create(
@@ -301,23 +257,15 @@ class ManilaGenericBasicDeployment(OpenStackAmuletDeployment):
                     role=admin_role,
                     user=demo_user,
                     project=demo_project)
-            # now we can finally get the manila client and create the secret
-            keystone_ep = self.keystone.service_catalog.url_for(
-                service_type='identity', endpoint_type='publicURL')
-            auth = keystone_identity.v3.Password(
-                user_domain_name=domain.name,
-                username=demo_user.name,
-                password='pass',
-                project_domain_name=domain.name,
-                project_name=demo_project.name,
-                auth_url=keystone_ep)
 
-        # Now we carry on with common v2 and v3 code
-        sess = keystone_session.Session(auth=auth)
+        self.keystone_demo = u.authenticate_keystone_user(
+            self.keystone, user='demo',
+            password='pass', tenant='demo')
+
         # Authenticate admin with manila endpoint
         manila_ep = self.keystone.service_catalog.url_for(
-            service_type='share', endpoint_type='publicURL')
-        manila = manila_client.Client(session=sess,
+            service_type='share', interface='publicURL')
+        manila = manila_client.Client(session=self.keystone_demo.session,
                                       endpoint=manila_ep)
         # now just try a list the shares
         manila.shares.list()
