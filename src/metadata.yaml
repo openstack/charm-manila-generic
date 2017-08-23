@@ -16,7 +16,6 @@ tags:
   - openstack
 series:
   - xenial
-  - yakkety
   - zesty
 subordinate: true
 provides:
