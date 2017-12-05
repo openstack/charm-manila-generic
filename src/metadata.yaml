@@ -16,8 +16,8 @@ tags:
   - openstack
 series:
   - xenial
+  - bionic
   - artful
-  - zesty
 subordinate: true
 provides:
   manila-plugin:
