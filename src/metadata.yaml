@@ -17,7 +17,6 @@ tags:
 series:
   - xenial
   - artful
-  - zesty
 subordinate: true
 provides:
   manila-plugin:
