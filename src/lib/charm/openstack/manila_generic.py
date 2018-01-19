@@ -25,7 +25,7 @@ import charmhelpers.core.hookenv as hookenv
 import charmhelpers.core.templating
 import charms_openstack.charm
 import charms_openstack.adapters
-import charms.reactive
+import charms.reactive.relations as relations
 
 # There are no additional packages to install.
 PACKAGES = []
@@ -199,8 +199,7 @@ class ManilaGenericCharm(charms_openstack.charm.OpenStackCharm):
         # TODO this is horrible, and we should have something in
         # charms.openstack to do this, but we need a c.r relation to be able to
         # add it to the adapters_instance
-        manila_plugin = charms.reactive.RelationBase.from_state(
-            'manila-plugin.available')
+        manila_plugin = relations.endpoint_from_flag('manila-plugin.available')
         self.adapters_instance.add_relation(manila_plugin)
         rendered_configs = charmhelpers.core.templating.render(
             source=os.path.basename(MANILA_CONF),

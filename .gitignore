@@ -4,4 +4,5 @@ layers
 interfaces
 trusty
 .testrepository
+.stestr
 __pycache__
