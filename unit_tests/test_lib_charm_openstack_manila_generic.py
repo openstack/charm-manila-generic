@@ -33,7 +33,7 @@ class TestManilaGenericCharmConfigProperties(Helper):
 
     def test_computed_use_password(self):
         config = mock.MagicMock()
-        # test no passowrd or driver_auth_type configured
+        # test no password or driver_auth_type configured
         config.driver_service_instance_password = None
         config.driver_auth_type = None
         self.assertFalse(manila_generic.computed_use_password(config))
