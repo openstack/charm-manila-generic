@@ -17,7 +17,7 @@ tags:
 series:
   - xenial
   - bionic
-  - artful
+  - cosmic
 subordinate: true
 provides:
   manila-plugin:
