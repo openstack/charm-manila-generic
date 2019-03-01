@@ -1,8 +1,9 @@
 # Overview
 
-This is a _pre-release_ charm intended for *testing* only.
+This charm exists to provide an example back-end for Manila, for the purpose
+of test and reference.  It is not intended for production use in any case.
 
-This charm configures the generic backend in the related manila charm in an
+It configures the generic backend in the related manila charm in an
 OpenStack cloud.  This provides NFS shares using Cinder as a backing store.  It
 should be used for testing and development purposes only.
 
