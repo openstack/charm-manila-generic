@@ -18,6 +18,7 @@ series:
   - xenial
   - bionic
   - cosmic
+  - disco
 subordinate: true
 provides:
   manila-plugin:
