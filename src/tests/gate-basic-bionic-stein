@@ -1,0 +1,10 @@
+#!/usr/bin/env python
+
+"""Amulet tests on a basic barbican deployment on bionic-stein for keystone v2.
+"""
+
+from basic_deployment import ManilaGenericBasicDeployment
+
+if __name__ == '__main__':
+    deployment = ManilaGenericBasicDeployment(series='bionic', keystone_version='3')
+    deployment.run_tests()
