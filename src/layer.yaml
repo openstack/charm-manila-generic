@@ -2,3 +2,7 @@ includes:
   - layer:openstack
   - interface:manila-plugin
 repo: https://github.com/openstack/charm-manila-generic
+options:
+  basic:
+    include_system_packages: True
+    packages: ['python3-apt']
