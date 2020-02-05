@@ -18,7 +18,6 @@ series:
   - xenial
   - bionic
   - eoan
-  - disco
 subordinate: true
 provides:
   manila-plugin:
