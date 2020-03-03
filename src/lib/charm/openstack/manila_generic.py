@@ -120,6 +120,7 @@ class ManilaGenericCharm(charms_openstack.charm.OpenStackCharm):
     release = 'mitaka'
     name = 'manila-generic'
     packages = PACKAGES
+    release_pkg = 'manila-common'
     version_package = 'manila-api'  # need this for versioning the app
     api_ports = {}
     service_type = None
