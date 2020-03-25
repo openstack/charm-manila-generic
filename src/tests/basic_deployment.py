@@ -78,7 +78,6 @@ class ManilaGenericBasicDeployment(OpenStackAmuletDeployment):
         """Configure all of the services."""
         keystone_config = {
             'admin-password': 'openstack',
-            'admin-token': 'ubuntutesting',
         }
         manila_config = {
             'default-share-backend': 'generic',
@@ -222,9 +221,9 @@ class ManilaGenericBasicDeployment(OpenStackAmuletDeployment):
             # find or create the 'default' domain
             domain = self._find_or_create(
                 items=self.keystone.domains.list(),
-                key=lambda u: u.name == 'default',
+                key=lambda u: u.name == 'Default',
                 create=lambda: self.keystone.domains.create(
-                    "default",
+                    "Default",
                     description="domain for manila testing",
                     enabled=True))
             # find or create the 'demo' user
