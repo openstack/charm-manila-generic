@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 
-"""Amulet tests on a basic barbican deployment on xenial-queens for keystone v2.
+"""Amulet tests on a basic barbican deployment on xenial-queens for keystone v3
 """
 
 from basic_deployment import ManilaGenericBasicDeployment
 
 if __name__ == '__main__':
-    deployment = ManilaGenericBasicDeployment(series='xenial', keystone_version='2')
+    deployment = ManilaGenericBasicDeployment(
+        series='xenial', keystone_version='3',
+        openstack='cloud:xenial-queens',
+        source='cloud:xenial-queens')
     deployment.run_tests()

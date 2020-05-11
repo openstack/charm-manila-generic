@@ -6,5 +6,8 @@
 from basic_deployment import ManilaGenericBasicDeployment
 
 if __name__ == '__main__':
-    deployment = ManilaGenericBasicDeployment(series='xenial', keystone_version='2')
+    deployment = ManilaGenericBasicDeployment(
+        series='xenial', keystone_version='2',
+        openstack='cloud:xenial-pike',
+        source='cloud:xenial-pike')
     deployment.run_tests()
