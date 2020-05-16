@@ -6,3 +6,10 @@ options:
     use_venv: True
     include_system_packages: False
 repo: https://github.com/openstack/charm-manila-generic
+config:
+  deletes:
+    - use-internal-endpoints
+    - use-syslog
+    - ssl_ca
+    - ssl_cert
+    - ssl_key
