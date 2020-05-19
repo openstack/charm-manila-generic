@@ -18,6 +18,7 @@ series:
   - xenial
   - bionic
   - eoan
+  - focal
 subordinate: true
 provides:
   manila-plugin:
