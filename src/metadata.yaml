@@ -13,12 +13,13 @@ description: |
   configuration information to the manila charm to configure the Manila
   instance such that it can use the generic driver appropriately.
 tags:
-  - openstack
+- openstack
 series:
-  - xenial
-  - bionic
-  - eoan
-  - focal
+- xenial
+- bionic
+- eoan
+- focal
+- groovy
 subordinate: true
 provides:
   manila-plugin:
