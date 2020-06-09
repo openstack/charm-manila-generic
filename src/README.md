@@ -1,7 +1,7 @@
 # Overview
 
-This charm exists to provide an example back-end for Manila, for the purpose
-of test and reference.  It is not intended for production use in any case.
+This charm exists to provide an example backend for Manila, for the purpose
+of test and reference.  It is NOT intended for production use in any case.
 
 It configures the generic backend in the related manila charm in an
 OpenStack cloud.  This provides NFS shares using Cinder as a backing store.  It
@@ -9,7 +9,7 @@ should be used for testing and development purposes only.
 
 # Usage
 
-The charm relies on the prinical manila charm, and is a subordinate to it.  It
+The charm relies on the principal manila charm, and is a subordinate to it.  It
 provides configuration data to the manila-share service (which is provided by
 the manila charm with a role that includes 'share').
 

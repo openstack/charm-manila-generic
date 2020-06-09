@@ -2,7 +2,7 @@ name: manila-generic
 summary: A generic backend configuration charm for manila.
 maintainer: OpenStack Charmers <openstack-charmers@lists.ubuntu.com>
 description: |
-  The Manil share file system service provides a set of services for management
+  The Manila share file system service provides a set of services for management
   of shared file systems in a multi-tenant cloud environment. The service
   resembles OpenStack block-based storage management from the OpenStack Block
   Storage service project. With the Shared File Systems service, you can create
@@ -13,12 +13,13 @@ description: |
   configuration information to the manila charm to configure the Manila
   instance such that it can use the generic driver appropriately.
 tags:
-  - openstack
+- openstack
 series:
-  - xenial
-  - bionic
-  - eoan
-  - focal
+- xenial
+- bionic
+- eoan
+- focal
+- groovy
 subordinate: true
 provides:
   manila-plugin:
