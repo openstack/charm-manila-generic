@@ -3,11 +3,13 @@ gate_bundles:
   - xenial-pike
   - xenial-queens
   - bionic-queens
+  - bionic-rocky
   - bionic-stein
   - bionic-train
-  - bionic-rocky
+  - bionic-ussuri
+  - focal-ussuri
 smoke_bundles:
-  - bionic-queens
+  - focal-ussuri
 target_deploy_status: {}
 tests:
   - zaza.openstack.charm_tests.manila.tests.ManilaTests
