@@ -1,0 +1,41 @@
+series: xenial
+options:
+  source: &source cloud:xenial-queens
+services:
+  manila:
+    charm: cs:~openstack-charmers-next/manila
+    num_units: 1
+    options:
+      default-share-backend: generic
+      openstack-origin: *source
+  manila-generic:
+    charm: ../../../manila-generic
+    options:
+      driver-handles-share-servers: False
+  rabbitmq-server:
+    charm: cs:~openstack-charmers-next/rabbitmq-server
+    num_units: 1
+    options:
+      source: *source
+  percona-cluster:
+    charm: cs:~openstack-charmers-next/percona-cluster
+    num_units: 1
+    options:
+      source: *source
+  keystone:
+    charm: cs:~openstack-charmers-next/keystone
+    num_units: 1
+    options:
+      openstack-origin: *source
+
+relations:
+  - - manila:manila-plugin
+    - manila-generic
+  - - manila
+    - rabbitmq-server
+  - - manila
+    - keystone
+  - - keystone
+    - percona-cluster
+  - - manila
+    - percona-cluster

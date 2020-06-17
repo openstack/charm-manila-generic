@@ -5,7 +5,6 @@ TODO
  * Add a manila-backend-plugin interface
  * Split the generic configuration into manila-generic-backend charm
  * Add unit tests
- * Add amulet tests
  * Put the manual testing bits into charm-openstack-testing so that the bundles
    are available
 
