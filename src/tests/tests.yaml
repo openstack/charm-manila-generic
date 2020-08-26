@@ -10,8 +10,14 @@ gate_bundles:
   - focal-ussuri
 smoke_bundles:
   - focal-ussuri
+dev_bundles:
+  - focal-victoria
+  - groovy-victoria
 target_deploy_status: {}
 tests:
   - zaza.openstack.charm_tests.manila.tests.ManilaTests
 configure:
   - zaza.openstack.charm_tests.keystone.setup.add_demo_user
+tests_options:
+  force_deploy:
+    - groovy-victoria
