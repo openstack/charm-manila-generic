@@ -8,10 +8,10 @@ gate_bundles:
   - bionic-train
   - bionic-ussuri
   - focal-ussuri
+  - focal-victoria
 smoke_bundles:
   - focal-ussuri
 dev_bundles:
-  - focal-victoria
   - groovy-victoria
 target_deploy_status: {}
 tests:
