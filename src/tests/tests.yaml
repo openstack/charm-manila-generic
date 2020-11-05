@@ -9,10 +9,9 @@ gate_bundles:
   - bionic-ussuri
   - focal-ussuri
   - focal-victoria
+  - groovy-victoria
 smoke_bundles:
   - focal-ussuri
-dev_bundles:
-  - groovy-victoria
 target_deploy_status: {}
 tests:
   - zaza.openstack.charm_tests.manila.tests.ManilaTests
