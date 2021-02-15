@@ -1,0 +1,15 @@
+- project:
+    templates:
+      - charm-unit-jobs
+    check:
+      jobs:
+      - bionic-queens
+      - bionic-stein
+      - bionic-train
+      - bionic-ussuri
+      - focal-ussuri
+      - focal-victoria
+      - groovy-victoria
+    vars:
+      needs_charm_build: true
+      charm_build_name: manila-generic
