@@ -19,6 +19,7 @@ series:
 - bionic
 - focal
 - groovy
+- hirsute
 subordinate: true
 provides:
   manila-plugin:
