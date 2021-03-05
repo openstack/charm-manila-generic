@@ -9,7 +9,9 @@
       - bionic-ussuri
       - focal-ussuri
       - focal-victoria
+      - focal-wallaby
       - groovy-victoria
+      - hirsute-wallaby
     vars:
       needs_charm_build: true
       charm_build_name: manila-generic
