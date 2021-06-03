@@ -20,6 +20,7 @@ series:
 - focal
 - groovy
 - hirsute
+- impish
 subordinate: true
 provides:
   manila-plugin:
