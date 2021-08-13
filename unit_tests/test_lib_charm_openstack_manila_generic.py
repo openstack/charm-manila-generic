@@ -181,9 +181,9 @@ class TestManilaGenericCharm(Helper):
         auth_data = {
             'username': 'user',
             'password': 'pass',
-            'project_domain_id': 'pd1',
+            'project_domain_name': 'pd1',
             'project_name': 'p1',
-            'user_domain_id': 'ud1',
+            'user_domain_name': 'ud1',
             'auth_uri': 'uri1',
             'auth_url': 'url1',
             'auth_type': 'type1',

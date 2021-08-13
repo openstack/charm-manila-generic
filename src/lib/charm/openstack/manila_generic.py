@@ -93,9 +93,9 @@ def authentication_data(manila_plugin):
         {
             'username': <value>
             'password': <value>
-            'project_domain_id': <value>
+            'project_domain_name': <value>
             'project_name': <value>
-            'user_domain_id': <value>
+            'user_domain_name': <value>
             'auth_uri': <value>
             'auth_url': <value>
             'auth_type': <value>  # 'password', typically
