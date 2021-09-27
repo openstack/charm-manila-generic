@@ -10,8 +10,12 @@
       - focal-ussuri
       - focal-victoria
       - focal-wallaby
+      - focal-xena:
+          voting: false
       - groovy-victoria
       - hirsute-wallaby
+      - impish-xena:
+          voting: false
     vars:
       needs_charm_build: true
       charm_build_name: manila-generic

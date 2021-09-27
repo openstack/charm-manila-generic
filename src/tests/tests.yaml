@@ -17,7 +17,9 @@ dev_bundles:
   - xenial-pike
   - xenial-queens
   - bionic-rocky
+  - focal-xena
   - hirsute-wallaby
+  - impish-wallaby
 
 target_deploy_status: {}
 
@@ -29,4 +31,5 @@ configure:
 
 tests_options:
   force_deploy:
-    - hirsute-wallaby
+    - groovy-victoria
+    - impish-xena
