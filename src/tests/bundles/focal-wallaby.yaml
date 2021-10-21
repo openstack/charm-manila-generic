@@ -20,10 +20,8 @@ services:
 
   manila-mysql-router:
     charm: cs:~openstack-charmers/mysql-router
-    channel: candidate
   keystone-mysql-router:
     charm: cs:~openstack-charmers/mysql-router
-    channel: candidate
 
   mysql-innodb-cluster:
     charm: cs:~openstack-charmers/mysql-innodb-cluster
@@ -34,7 +32,6 @@ services:
       - '0'
       - '1'
       - '2'
-    channel: candidate
 
   manila:
     charm: cs:~openstack-charmers/manila
@@ -44,7 +41,6 @@ services:
       openstack-origin: *openstack-origin
     to:
       - '3'
-    channel: candidate
 
   manila-generic:
     charm: ../../../manila-generic
@@ -58,7 +54,6 @@ services:
       source: *openstack-origin
     to:
       - '4'
-    channel: candidate
 
   keystone:
     charm: cs:~openstack-charmers/keystone
@@ -67,7 +62,6 @@ services:
       openstack-origin: *openstack-origin
     to:
       - '5'
-    channel: candidate
 
 relations:
 
