@@ -18,6 +18,8 @@ services:
   keystone:
     charm: cs:~openstack-charmers-next/keystone
     num_units: 1
+  nrpe:
+    charm: cs:nrpe
 
 relations:
   - - manila:manila-plugin
@@ -30,3 +32,5 @@ relations:
     - percona-cluster
   - - manila
     - percona-cluster
+  - - nrpe:nrpe-external-master
+    - manila:nrpe-external-master

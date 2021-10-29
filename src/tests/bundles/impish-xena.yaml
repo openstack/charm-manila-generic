@@ -62,6 +62,8 @@ services:
       openstack-origin: *openstack-origin
     to:
       - '5'
+  nrpe:
+    charm: cs:nrpe
 
 relations:
 
@@ -83,3 +85,6 @@ relations:
     - 'keystone-mysql-router:shared-db'
   - - 'keystone-mysql-router:db-router'
     - 'mysql-innodb-cluster:db-router'
+
+  - - 'nrpe:nrpe-external-master'
+    - 'manila:nrpe-external-master'
