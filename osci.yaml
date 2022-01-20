@@ -1,17 +1,7 @@
 - project:
     templates:
-      - charm-unit-jobs
-    check:
-      jobs:
-      - bionic-queens
-      - bionic-stein
-      - bionic-train
-      - bionic-ussuri
-      - focal-ussuri
-      - focal-victoria
-      - focal-wallaby
-      - groovy-victoria
-      - hirsute-wallaby
+      - charm-unit-jobs-py36
+      - charm-queens-functional-jobs
     vars:
       needs_charm_build: true
       charm_build_name: manila-generic

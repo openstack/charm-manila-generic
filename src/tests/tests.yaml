@@ -2,22 +2,11 @@ charm_name: manila-generic
 
 gate_bundles:
   - bionic-queens
-  - bionic-stein
-  - bionic-train
-  - bionic-ussuri
-  - focal-ussuri
-  - focal-victoria
-  - focal-wallaby
-  - groovy-victoria
 
 smoke_bundles:
-  - focal-ussuri
+  - bionic-queens
 
-dev_bundles:
-  - xenial-pike
-  - xenial-queens
-  - bionic-rocky
-  - hirsute-wallaby
+dev_bundles: []
 
 target_deploy_status: {}
 
@@ -26,7 +15,3 @@ tests:
 
 configure:
   - zaza.openstack.charm_tests.keystone.setup.add_demo_user
-
-tests_options:
-  force_deploy:
-    - hirsute-wallaby
