@@ -19,12 +19,14 @@ machines:
 services:
 
   manila-mysql-router:
-    charm: cs:~openstack-charmers/mysql-router
+    charm: ch:mysql-router
+    channel: 8.0.19/edge
   keystone-mysql-router:
-    charm: cs:~openstack-charmers/mysql-router
+    charm: ch:mysql-router
+    channel: 8.0.19/edge
 
   mysql-innodb-cluster:
-    charm: cs:~openstack-charmers/mysql-innodb-cluster
+    charm: ch:mysql-innodb-cluster
     num_units: 3
     options:
       source: *openstack-origin
@@ -32,15 +34,18 @@ services:
       - '0'
       - '1'
       - '2'
+    channel: 8.0.19/edge
+    series: focal
 
   manila:
-    charm: cs:~openstack-charmers/manila
+    charm: ch:manila
     num_units: 1
     options:
       default-share-backend: generic
       openstack-origin: *openstack-origin
     to:
       - '3'
+    channel: victoria/edge
 
   manila-generic:
     charm: ../../../manila-generic
@@ -48,20 +53,23 @@ services:
       driver-handles-share-servers: False
 
   rabbitmq-server:
-    charm: cs:~openstack-charmers/rabbitmq-server
+    charm: ch:rabbitmq-server
     num_units: 1
     options:
       source: *openstack-origin
     to:
       - '4'
+    channel: 3.8/edge
+    series: focal
 
   keystone:
-    charm: cs:~openstack-charmers/keystone
+    charm: ch:keystone
     num_units: 1
     options:
       openstack-origin: *openstack-origin
     to:
       - '5'
+    channel: victoria/edge
 
 relations:
 
