@@ -3,30 +3,34 @@ options:
   source: &source cloud:bionic-ussuri
 services:
   manila:
-    charm: cs:~openstack-charmers/manila
+    charm: ch:manila
     num_units: 1
     options:
       default-share-backend: generic
       openstack-origin: *source
+    channel: ussuri/edge
   manila-generic:
     charm: ../../../manila-generic
     options:
       driver-handles-share-servers: False
   rabbitmq-server:
-    charm: cs:~openstack-charmers/rabbitmq-server
+    charm: ch:rabbitmq-server
     num_units: 1
     options:
       source: *source
+    channel: 3.6/edge
   percona-cluster:
-    charm: cs:~openstack-charmers/percona-cluster
+    charm: ch:percona-cluster
     num_units: 1
     options:
       source: *source
+    channel: 5.7/edge
   keystone:
-    charm: cs:~openstack-charmers/keystone
+    charm: ch:keystone
     num_units: 1
     options:
       openstack-origin: *source
+    channel: ussuri/edge
 
 relations:
   - - manila:manila-plugin
