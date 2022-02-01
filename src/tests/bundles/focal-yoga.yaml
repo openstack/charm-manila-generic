@@ -1,6 +1,8 @@
 variables:
   openstack-origin: &openstack-origin cloud:focal-yoga
 
+local_overlay_enabled: False
+
 series: focal
 
 comment:
@@ -47,7 +49,7 @@ services:
     channel: latest/edge
 
   manila-generic:
-    charm: ../../../manila-generic
+    charm: ../../../manila-generic.charm
     options:
       driver-handles-share-servers: False
 
