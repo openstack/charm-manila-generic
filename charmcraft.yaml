@@ -21,5 +21,9 @@ parts:
 bases:
   - name: ubuntu
     channel: "20.04"
-    architectures:
-      - amd64
+    #architectures:
+      #- amd64
+      #- s390x
+      #- ppc64el
+      #- arm64
+      #- armhf
