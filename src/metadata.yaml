@@ -17,9 +17,9 @@ tags:
 series:
 - bionic
 - focal
+- jammy
 - groovy
 - hirsute
-- impish
 subordinate: true
 provides:
   manila-plugin:
