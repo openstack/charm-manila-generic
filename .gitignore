@@ -6,3 +6,4 @@ trusty
 .testrepository
 .stestr
 __pycache__
+*.charm

@@ -16,7 +16,6 @@ tags:
 - openstack
 series:
 - focal
-- hirsute
 subordinate: true
 provides:
   manila-plugin:
