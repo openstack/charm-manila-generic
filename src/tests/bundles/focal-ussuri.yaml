@@ -1,3 +1,5 @@
+local_overlay_enabled: False
+
 variables:
   openstack-origin: &openstack-origin distro
 
@@ -20,10 +22,10 @@ services:
 
   manila-mysql-router:
     charm: ch:mysql-router
-    channel: 8.0.19/edge
+    channel: 8.0/edge
   keystone-mysql-router:
     charm: ch:mysql-router
-    channel: 8.0.19/edge
+    channel: 8.0/edge
 
   mysql-innodb-cluster:
     charm: ch:mysql-innodb-cluster
@@ -34,7 +36,7 @@ services:
       - '0'
       - '1'
       - '2'
-    channel: 8.0.19/edge
+    channel: 8.0/edge
 
   manila:
     charm: ch:manila
@@ -44,10 +46,10 @@ services:
       openstack-origin: *openstack-origin
     to:
       - '3'
-    channel: ussuri/edge
+    channel: victoria/edge
 
   manila-generic:
-    charm: ../../../manila-generic
+    charm: ../../../manila-generic.charm
     options:
       driver-handles-share-servers: False
 
@@ -67,7 +69,10 @@ services:
       openstack-origin: *openstack-origin
     to:
       - '5'
-    channel: ussuri/edge
+    channel: victoria/edge
+
+  nrpe:
+    charm: cs:nrpe
 
 relations:
 
@@ -89,3 +94,6 @@ relations:
     - 'keystone-mysql-router:shared-db'
   - - 'keystone-mysql-router:db-router'
     - 'mysql-innodb-cluster:db-router'
+
+  - - 'nrpe:nrpe-external-master'
+    - 'manila:nrpe-external-master'

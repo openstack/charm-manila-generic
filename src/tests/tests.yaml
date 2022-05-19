@@ -7,8 +7,7 @@ gate_bundles:
 smoke_bundles:
   - focal-victoria
 
-dev_bundles:
-  - groovy-victoria
+dev_bundles: []
 
 target_deploy_status: {}
 
