@@ -1,3 +1,5 @@
+local_overlay_enabled: False
+
 series: bionic
 options:
   source: &source cloud:bionic-ussuri
@@ -10,7 +12,7 @@ services:
       openstack-origin: *source
     channel: ussuri/edge
   manila-generic:
-    charm: ../../../manila-generic
+    charm: ../../../manila-generic.charm
     options:
       driver-handles-share-servers: False
   rabbitmq-server:
@@ -18,7 +20,7 @@ services:
     num_units: 1
     options:
       source: *source
-    channel: 3.6/edge
+    channel: 3.8/edge
   percona-cluster:
     charm: ch:percona-cluster
     num_units: 1
@@ -31,6 +33,8 @@ services:
     options:
       openstack-origin: *source
     channel: ussuri/edge
+  nrpe:
+    charm: cs:nrpe
 
 relations:
   - - manila:manila-plugin
@@ -43,3 +47,5 @@ relations:
     - percona-cluster
   - - manila
     - percona-cluster
+  - - 'nrpe:nrpe-external-master'
+    - 'manila:nrpe-external-master'
