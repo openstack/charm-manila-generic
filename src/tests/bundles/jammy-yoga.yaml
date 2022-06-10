@@ -47,7 +47,7 @@ services:
     channel: latest/edge
 
   manila-generic:
-    charm: ../../../manila-generic
+    charm: ../../../manila-generic.charm
     options:
       driver-handles-share-servers: False
 
@@ -69,7 +69,8 @@ services:
       - '5'
     channel: latest/edge
   nrpe:
-    charm: cs:nrpe
+    charm: ch:nrpe
+    channel: latest/edge
 
 relations:
 

@@ -1,15 +1,15 @@
 charm_name: manila-generic
 
 gate_bundles:
-  - focal-xena
-  - impish-xena
+  - jammy-yoga
 
 smoke_bundles:
-  - focal-xena
+  - jammy-yoga
 
 dev_bundles:
-  - focal-yoga
   - jammy-yoga
+  - jammy-zed
+  - kinetic-zed
 
 target_deploy_status: {}
 
@@ -21,5 +21,8 @@ configure:
 
 tests_options:
   force_deploy:
-    - impish-xena
+    # nrpe charm doesn't support jammy+ and needs to be force installed
+    # https://bugs.launchpad.net/charm-nrpe/+bug/1968008
+    - jammy-zed
     - jammy-yoga
+    - kinetic-zed

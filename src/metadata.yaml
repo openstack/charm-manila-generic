@@ -15,11 +15,8 @@ description: |
 tags:
 - openstack
 series:
-- bionic
-- focal
 - jammy
-- groovy
-- hirsute
+- kinetic
 subordinate: true
 provides:
   manila-plugin:
