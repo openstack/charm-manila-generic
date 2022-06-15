@@ -22,10 +22,10 @@ services:
 
   manila-mysql-router:
     charm: ch:mysql-router
-    channel: latest/edge
+    channel: 8.0/edge
   keystone-mysql-router:
     charm: ch:mysql-router
-    channel: latest/edge
+    channel: 8.0/edge
 
   mysql-innodb-cluster:
     charm: ch:mysql-innodb-cluster
@@ -36,7 +36,7 @@ services:
       - '0'
       - '1'
       - '2'
-    channel: latest/edge
+    channel: 8.0/edge
 
   manila:
     charm: ch:manila
@@ -46,7 +46,7 @@ services:
       openstack-origin: *openstack-origin
     to:
       - '3'
-    channel: latest/edge
+    channel: yoga/edge
 
   manila-generic:
     charm: ../../../manila-generic.charm
@@ -60,7 +60,7 @@ services:
       source: *openstack-origin
     to:
       - '4'
-    channel: latest/edge
+    channel: 3.9/edge
 
   keystone:
     charm: ch:keystone
@@ -69,7 +69,7 @@ services:
       openstack-origin: *openstack-origin
     to:
       - '5'
-    channel: latest/edge
+    channel: yoga/edge
   nrpe:
     charm: cs:nrpe
 
