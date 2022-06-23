@@ -2,7 +2,7 @@ local_overlay_enabled: False
 
 series: bionic
 options:
-  source: &source cloud:bionic-train
+  source: &source cloud:bionic-rocky
 services:
   manila:
     charm: ch:manila

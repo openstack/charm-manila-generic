@@ -1,8 +1,11 @@
 - project:
     templates:
       - charm-unit-jobs-py36
-      - charm-train-functional-jobs
+      - charm-queens-functional-jobs
+      - charm-rocky-functional-jobs
       - charm-stein-functional-jobs
+      - charm-train-functional-jobs
     vars:
       needs_charm_build: true
       charm_build_name: manila-generic
+      build_type: charmcraft

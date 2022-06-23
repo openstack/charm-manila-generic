@@ -1,3 +1,5 @@
+local_overlay_enabled: False
+
 series: bionic
 options:
   source: &source cloud:bionic-stein
@@ -10,7 +12,7 @@ services:
       openstack-origin: *source
     channel: stein/edge
   manila-generic:
-    charm: ../../../manila-generic
+    charm: ../../../manila-generic.charm
     options:
       driver-handles-share-servers: False
   rabbitmq-server:
@@ -31,6 +33,8 @@ services:
     options:
       openstack-origin: *source
     channel: stein/edge
+  nrpe:
+    charm: cs:nrpe
 
 relations:
   - - manila:manila-plugin
@@ -43,3 +47,5 @@ relations:
     - percona-cluster
   - - manila
     - percona-cluster
+  - - 'nrpe:nrpe-external-master'
+    - 'manila:nrpe-external-master'

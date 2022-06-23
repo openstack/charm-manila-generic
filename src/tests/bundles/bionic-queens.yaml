@@ -1,15 +1,12 @@
 local_overlay_enabled: False
 
 series: bionic
-options:
-  source: &source cloud:bionic-train
 services:
   manila:
     charm: ch:manila
     num_units: 1
     options:
       default-share-backend: generic
-      openstack-origin: *source
     channel: train/edge
   manila-generic:
     charm: ../../../manila-generic.charm
@@ -18,20 +15,14 @@ services:
   rabbitmq-server:
     charm: ch:rabbitmq-server
     num_units: 1
-    options:
-      source: *source
     channel: 3.6/edge
   percona-cluster:
     charm: ch:percona-cluster
     num_units: 1
-    options:
-      source: *source
     channel: 5.7/edge
   keystone:
     charm: ch:keystone
     num_units: 1
-    options:
-      openstack-origin: *source
     channel: train/edge
   nrpe:
     charm: cs:nrpe
