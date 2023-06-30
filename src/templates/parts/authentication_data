@@ -1,8 +1,8 @@
 username = {{ manila_plugin.authentication_data.username }}
 password = {{ manila_plugin.authentication_data.password }}
-{{ # Defense mechanism introduced in the charm release 21.10 because of a 
+{# Defense mechanism introduced in the charm release 21.10 because of a 
      relation data key renaming, and would be safe to remove 2 releases later.
-#}}
+#}
 project_domain_name = {{ manila_plugin.authentication_data.project_domain_name or manila_plugin.authentication_data.project_domain_id }}
 user_domain_name = {{ manila_plugin.authentication_data.user_domain_name or manila_plugin.authentication_data.user_domain_id }}
 project_name = {{ manila_plugin.authentication_data.project_name }}
