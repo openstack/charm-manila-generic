@@ -12,6 +12,7 @@ description: |
   The manila-generic plugin (using the manila-plugin relation) provides the
   configuration information to the manila charm to configure the Manila
   instance such that it can use the generic driver appropriately.
+docs: https://discourse.charmhub.io/t/manila-generic-docs-index/11094
 tags:
 - openstack
 series:
