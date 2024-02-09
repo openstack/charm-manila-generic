@@ -1,7 +1,9 @@
 variables:
   openstack-origin: &openstack-origin distro
 
-series: mantic
+local_overlay_enabled: False
+
+series: noble
 
 comment:
 - 'machines section to decide order of deployment. database sooner = faster'
@@ -44,7 +46,7 @@ services:
       openstack-origin: *openstack-origin
     to:
       - '3'
-    channel: latest/edge
+    channel: 2024.1/edge
 
   manila-generic:
     charm: ../../../manila-generic.charm
@@ -65,7 +67,7 @@ services:
       openstack-origin: *openstack-origin
     to:
       - '5'
-    channel: latest/edge
+    channel: 2024.1/edge
   nrpe:
     charm: ch:nrpe
     channel: latest/edge
