@@ -1,12 +1,10 @@
 charm_name: manila-generic
 
 gate_bundles:
-  - jammy-antelope
-  - jammy-bobcat
-  - jammy-caracal
-smoke_bundles:
-  - jammy-caracal
+  - noble-caracal
 dev_bundles:
+  - noble-caracal
+smoke_bundles:
   - noble-caracal
 target_deploy_status: {}
 

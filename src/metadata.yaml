@@ -15,8 +15,6 @@ description: |
 docs: https://discourse.charmhub.io/t/manila-generic-docs-index/11094
 tags:
   - openstack
-series:
-  - jammy
 subordinate: true
 provides:
   manila-plugin:

@@ -46,7 +46,7 @@ services:
       openstack-origin: *openstack-origin
     to:
       - '3'
-    channel: 2024.1/edge
+    channel: latest/edge
 
   manila-generic:
     charm: ../../../manila-generic.charm
@@ -67,7 +67,7 @@ services:
       openstack-origin: *openstack-origin
     to:
       - '5'
-    channel: 2024.1/edge
+    channel: latest/edge
   nrpe:
     charm: ch:nrpe
     channel: latest/edge
