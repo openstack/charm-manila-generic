@@ -14,9 +14,10 @@ description: |
   instance such that it can use the generic driver appropriately.
 docs: https://discourse.charmhub.io/t/manila-generic-docs-index/11094
 tags:
-  - openstack
+- openstack
 series:
-  - jammy
+- jammy
+- noble
 subordinate: true
 provides:
   manila-plugin:
