@@ -158,7 +158,7 @@ class ManilaGenericCharm(charms_openstack.charm.OpenStackCharm):
             return ('blocked',
                     "Missing 'driver-service-instance-flavor-id'")
         # Need at least one of the password or the keypair
-        if not(bool(options.driver_service_instance_password) or
+        if not (bool(options.driver_service_instance_password) or
                 bool(options.driver_keypair_name)):
             return ('blocked',
                     "Need at least one of instance password or keypair name")
